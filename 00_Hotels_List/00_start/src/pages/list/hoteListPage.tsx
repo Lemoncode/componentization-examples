@@ -9,6 +9,7 @@ import { isValidLogin } from '../../api/login';
 import { NotificationComponent } from '../../common'
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
+import Typography from "@material-ui/core/Typography/Typography";
 
 // https://material-ui.com/guides/typescript/
 const styles = theme => createStyles({
@@ -67,25 +68,12 @@ class HotelListPageInner extends React.Component<Props, State> {
     return (
       <>
         <Card className={classes.card}>
-          <CardHeader title="Login" />
+          <CardHeader title="Hotel name" />
           <CardContent>
             <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-              <TextField
-                label="Name"
-                margin="normal"
-                value={this.state.loginInfo.login}
-                onChange={this.onTexFieldChange('login')}
-              />
-              <TextField
-                label="Password"
-                type="password"
-                margin="normal"
-                value={this.state.loginInfo.password}
-                onChange={this.onTexFieldChange('password')}
-              />
-              <Button variant="contained" color="primary" onClick={this.onLogin}>
-                Login
-              </Button>
+              <Typography variant="subheading" gutterBottom>
+                Hotel Card
+              </Typography>
             </div>
           </CardContent>
         </Card>
