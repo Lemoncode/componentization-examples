@@ -4,26 +4,20 @@ import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
 import CardContent from '@material-ui/core/CardContent';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
-import { LoginEntity, createEmptyLogin } from '../../model/login';
-import { isValidLogin } from '../../api/login';
-import { NotificationComponent } from '../../common'
-import TextField from "@material-ui/core/TextField";
-import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography/Typography";
+import { HotelEntity } from "../../model";
+import { getHotelList } from "../../api/hotel";
 
 // https://material-ui.com/guides/typescript/
 const styles = theme => createStyles({
   card: {
-    maxWidth: 400,
-    margin: '0 auto',
+    width: '500px',
+    marginTop: '10px',    
   },
 });
 
-
-
 interface State {
-  loginInfo: LoginEntity;
-  showLoginFailedMsg: boolean;
+  hotelList: HotelEntity[];
 }
 
 
@@ -36,55 +30,46 @@ class HotelListPageInner extends React.Component<Props, State> {
     super(props);
 
     this.state = {
-      loginInfo: createEmptyLogin(),
-      showLoginFailedMsg: false,
+      hotelList: []
     }
   }
 
-  onLogin = () => {
-    if (isValidLogin(this.state.loginInfo)) {
-      this.props.history.push('/pageB');
-    } else {
-      this.setState({ showLoginFailedMsg: true });
-    }
+  componentDidMount() {
+    getHotelList().then(
+      (hotelList) => this.setState({ hotelList })
+    );
   }
-
-  onUpdateLoginField = (name: string, value) => {
-    this.setState({
-      loginInfo: {
-        ...this.state.loginInfo,
-        [name]: value,
-      }
-    })
-  }
-
-  onTexFieldChange = (fieldId) => (e) => {
-    this.onUpdateLoginField(fieldId, e.target.value);
-  }
-
 
   render() {
     const { classes } = this.props;
     return (
-      <>
-        <Card className={classes.card}>
-          <CardHeader title="Hotel name" />
-          <CardContent>
-            <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-              <Typography variant="subheading" gutterBottom>
-                Hotel Card
-              </Typography>
-            </div>
-          </CardContent>
-        </Card>
-        <NotificationComponent
-          message="Invalid login or password, please type again"
-          show={this.state.showLoginFailedMsg}
-          onClose={() => this.setState({ showLoginFailedMsg: false })}
-        />
-      </>
+      <div style={
+          {
+            display:'flex',
+            flexWrap: 'wrap',
+            justifyContent: 'space-between'
+          }}>
+        {
+          this.state.hotelList.map(
+            (hotel) =>            
+              <Card className={classes.card} key={hotel.id}>
+                <CardHeader title={hotel.name} />
+                <CardContent>
+                  <div style=
+                    {{ display: 'flex', 
+                       flexDirection: 'column', 
+                       justifyContent: 'center' }}>
+                    <img src={hotel.thumbNailUrl} style={{width:'auto', maxHeight: '200px', margin:'auto'}}></img>
+                    <Typography variant="subtitle1" gutterBottom>
+                      {hotel.shortDescription}
+                  </Typography>
+                  </div>
+                </CardContent>
+              </Card>
+          )
+        }
+      </div>
     )
-
   }
 }
 

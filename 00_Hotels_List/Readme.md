@@ -14,10 +14,16 @@ this readme guide we will moving towards a more maintanable componentized versio
 npm install
 ```
 
+- Let's run a dummy rest-api server:
+
+```
+npm run mock-server
+```
+
 - Let's run the sample and check current ui aspect.
 
 ```bash
 npm start
 ```
 
-- 
+-  Let's check the layout.
