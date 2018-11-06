@@ -10,10 +10,9 @@ import CardActions from "@material-ui/core/CardActions/CardActions";
 import IconButton from "@material-ui/core/IconButton/IconButton";
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import ShareIcon from '@material-ui/icons/Share';
-import Avatar from "@material-ui/core/Avatar/Avatar";
 import red from '@material-ui/core/colors/red';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
 import {HotelCardHeader} from './hotelCardHeader';
+import {HotelCardContent} from './hotelCardContent';
 
 // https://material-ui.com/guides/typescript/
 const styles = theme => createStyles({
@@ -53,23 +52,12 @@ export const HotelCardInner = (props: Props) => {
           address={props.hotel.address1}
           rating={props.hotel.hotelRating}
         />
-        <CardContent>
-          <div style=
-            {{
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'center'
-            }}>
-            <CardMedia
-              className={classes.media}
-              image={props.hotel.thumbNailUrl}
-              title={props.hotel.name}
-            />
-            <Typography variant="subtitle1" gutterBottom>
-              {props.hotel.shortDescription}
-            </Typography>
-          </div>
-        </CardContent>
+        <HotelCardContent
+          pictureURL={props.hotel.thumbNailUrl}
+          name={props.hotel.name}
+          description={props.hotel.shortDescription}
+        />
+
         <CardActions className={classes.actions} disableActionSpacing>
           <IconButton aria-label="Add to favorites">
             <FavoriteIcon />
