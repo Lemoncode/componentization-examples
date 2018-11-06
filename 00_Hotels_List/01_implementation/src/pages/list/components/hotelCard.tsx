@@ -13,6 +13,7 @@ import ShareIcon from '@material-ui/icons/Share';
 import Avatar from "@material-ui/core/Avatar/Avatar";
 import red from '@material-ui/core/colors/red';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
+import {HotelCardHeader} from './hotelCardHeader';
 
 // https://material-ui.com/guides/typescript/
 const styles = theme => createStyles({
@@ -47,19 +48,10 @@ export const HotelCardInner = (props: Props) => {
         justifyContent: 'space-between'
       }}>
       <Card className={classes.card} key={props.hotel.id}>
-        <CardHeader
-          avatar={
-            <Avatar aria-label="Recipe" className={classes.avatar}>
-              {props.hotel.hotelRating}
-            </Avatar>
-          }
-          action={
-            <IconButton>
-              <MoreVertIcon />
-            </IconButton>
-          }
-          title={props.hotel.name}
-          subheader={props.hotel.address1}
+        <HotelCardHeader
+          name={props.hotel.name}
+          address={props.hotel.address1}
+          rating={props.hotel.hotelRating}
         />
         <CardContent>
           <div style=
