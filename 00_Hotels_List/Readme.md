@@ -788,16 +788,16 @@ const styles = theme => createStyles({
     width: '500px',
     marginTop: '10px',
   },
-  media: {
-    height: 0,
-    paddingTop: '56.25%', // 16:9
-  },
+-  media: {
+-    height: 0,
+-    paddingTop: '56.25%', // 16:9
+-  },
   actions: {
     display: 'flex',
   },
-  avatar: {
-    backgroundColor: red[500],
-  },
+-  avatar: {
+-    backgroundColor: red[500],
+-  },
 });
 
 interface Props extends WithStyles<typeof styles> {
@@ -842,6 +842,118 @@ export const HotelCardInner = (props: Props) => {
 -            </Typography>
 -          </div>
 -        </CardContent>
+        <CardActions className={classes.actions} disableActionSpacing>
+          <IconButton aria-label="Add to favorites">
+            <FavoriteIcon />
+          </IconButton>
+          <IconButton aria-label="Share">
+            <ShareIcon />
+          </IconButton>
+        </CardActions>
+      </Card>
+    </div>
+  )
+}
+
+export const HotelCard = withStyles(styles)(HotelCardInner);
+```
+
+- Give a try
+
+```bash
+npm start
+```
+
+- Let's got for the last part to be componentized _CardActions_
+
+_./src/pages/list/components/hotelCardActions.tsx_
+
+```jsx
+import * as React from "react"
+import { withStyles, createStyles, WithStyles } from '@material-ui/core/styles';
+import CardActions from "@material-ui/core/CardActions/CardActions";
+import IconButton from "@material-ui/core/IconButton/IconButton";
+import FavoriteIcon from '@material-ui/icons/Favorite';
+import ShareIcon from '@material-ui/icons/Share';
+
+// https://material-ui.com/guides/typescript/
+const styles = theme => createStyles({
+  actions: {
+    display: 'flex',
+  },
+});
+
+interface Props extends WithStyles<typeof styles> {
+}
+
+const HotelCardActionsInner = (props: Props) => {
+  const { classes } = props;
+
+  return (
+    <CardActions className={classes.actions} disableActionSpacing>
+    <IconButton aria-label="Add to favorites">
+      <FavoriteIcon />
+    </IconButton>
+    <IconButton aria-label="Share">
+      <ShareIcon />
+    </IconButton>
+  </CardActions>
+)
+}
+
+export const HotelCardActions = withStyles(styles)(HotelCardActionsInner);
+```
+
+- Let's update _hoteCard.tsx_
+
+_./src/pages/list/hotelCard.tsx_
+
+```diff
+import * as React from "react"
+import { withStyles, createStyles, WithStyles } from '@material-ui/core/styles';
+import Card from '@material-ui/core/Card';
+import { HotelEntity } from "../../../model";
+- import CardActions from "@material-ui/core/CardActions/CardActions";
+- import IconButton from "@material-ui/core/IconButton/IconButton";
+- import FavoriteIcon from '@material-ui/icons/Favorite';
+- import ShareIcon from '@material-ui/icons/Share';
+import {HotelCardHeader} from './hotelCardHeader';
+import {HotelCardContent} from './hotelCardContent';
+
+// https://material-ui.com/guides/typescript/
+const styles = theme => createStyles({
+  card: {
+    width: '500px',
+    marginTop: '10px',
+  },
+});
+
+interface Props extends WithStyles<typeof styles> {
+  hotel: HotelEntity;
+}
+
+export const HotelCardInner = (props: Props) => {
+  const { classes } = props;
+
+  return (
+    <div style={
+      {
+        display: 'flex',
+        flexWrap: 'wrap',
+        justifyContent: 'space-between'
+      }}>
+      <Card className={classes.card} key={props.hotel.id}>
+        <HotelCardHeader
+          name={props.hotel.name}
+          address={props.hotel.address1}
+          rating={props.hotel.hotelRating}
+        />
+        <HotelCardContent
+          pictureURL={props.hotel.thumbNailUrl}
+          name={props.hotel.name}
+          description={props.hotel.shortDescription}
+        />
+
         <CardActions className={classes.actions} disableActionSpacing>
           <IconButton aria-label="Add to favorites">
             <FavoriteIcon />
