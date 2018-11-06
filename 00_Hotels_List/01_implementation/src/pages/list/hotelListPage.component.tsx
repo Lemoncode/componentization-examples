@@ -1,7 +1,7 @@
 import * as React from "react"
 import { withStyles, createStyles, WithStyles } from '@material-ui/core/styles';
 import { HotelEntity } from "../../model";
-import { HotelCard } from './components/hotelCard'
+import { HotelCard } from './components';
 
 interface Props {
   hotelList: HotelEntity[];
@@ -21,7 +21,7 @@ export const HotelListPageInner = (props : Props) =>
         {
           props.hotelList.map(
             (hotel) => 
-              <HotelCard hotel={hotel} key={hotel.id}/>
+              <HotelCard hotel={hotel} key={hotel.id}/>         
           )
         }
       </div>

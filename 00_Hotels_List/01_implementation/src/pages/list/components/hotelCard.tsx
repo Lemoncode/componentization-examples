@@ -22,12 +22,6 @@ export const HotelCardInner = (props: Props) => {
   const { classes } = props;
 
   return (
-    <div style={
-      {
-        display: 'flex',
-        flexWrap: 'wrap',
-        justifyContent: 'space-between'
-      }}>
       <Card className={classes.card} key={props.hotel.id}>
         <HotelCardHeader
           name={props.hotel.name}
@@ -41,7 +35,6 @@ export const HotelCardInner = (props: Props) => {
         />
         <HotelCardActions/>
       </Card>
-    </div>
   )
 }
 

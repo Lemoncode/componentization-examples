@@ -649,12 +649,6 @@ export const HotelCardInner = (props: Props) => {
   const { classes } = props;
 
   return (
-    <div style={
-      {
-        display: 'flex',
-        flexWrap: 'wrap',
-        justifyContent: 'space-between'
-      }}>
       <Card className={classes.card} key={props.hotel.id}>
 +        <HotelCardHeader
 +          name={props.hotel.name}
@@ -808,12 +802,6 @@ export const HotelCardInner = (props: Props) => {
   const { classes } = props;
 
   return (
-    <div style={
-      {
-        display: 'flex',
-        flexWrap: 'wrap',
-        justifyContent: 'space-between'
-      }}>
       <Card className={classes.card} key={props.hotel.id}>
         <HotelCardHeader
           name={props.hotel.name}
@@ -851,7 +839,6 @@ export const HotelCardInner = (props: Props) => {
           </IconButton>
         </CardActions>
       </Card>
-    </div>
   )
 }
 
@@ -963,9 +950,34 @@ export const HotelCardInner = (props: Props) => {
           </IconButton>
         </CardActions>
       </Card>
-    </div>
   )
 }
 
 export const HotelCard = withStyles(styles)(HotelCardInner);
+```
+
+- Now we the _components_ subfolder seems to be a bit cluttered, what can we do?
+
+  - Create a _index.ts_ file that will ecxpose just hotelCard.
+  - We could as well wrap the card sucomponents in another subfolder.
+
+
+- Let's use the first approach.
+
+_./src/pages/list/components/index.ts_
+
+```typescript
+export * from './hotelCard';
+```
+
+- Now in the hotelListPageComponent we can just reffer to that subfolder.
+
+_./src/pages/list/hotelListPage.component.tsx_
+
+```diff
+import * as React from "react"
+import { withStyles, createStyles, WithStyles } from '@material-ui/core/styles';
+import { HotelEntity } from "../../model";
+- import { HotelCard } from './components/hotelCard';
++ import { HotelCard } from './components'
 ```
