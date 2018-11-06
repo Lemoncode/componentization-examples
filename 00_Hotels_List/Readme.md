@@ -30,7 +30,7 @@ npm start
 
 _./src/pages/list/hotelListPage.tsx_
 
-```jsx
+```javascript
 import * as React from "react"
 import { withStyles, createStyles, WithStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
@@ -152,7 +152,7 @@ class HotelListPageInner extends React.Component<Props, State> {
 }
 
 export const HotelListPage = withStyles(styles)(withRouter<Props>((HotelListPageInner)));
-```
+``` 
 
 - Let's analyze weak points of this implementation:
 
@@ -171,6 +171,7 @@ export const HotelListPage = withStyles(styles)(withRouter<Props>((HotelListPage
 
 - Ideally how should look like this page (pseudocode):
 
+_pseudocode_
 _./src/pages/hotelListPage.container.tsx_
 
 ```jsx
@@ -212,7 +213,7 @@ class HotelListPageContainer extends React.Component<Props, State> {
 
 export const HotelListPageContainer = withRouter<Props>(HotelListPageInner);
 ```
-
+_pseudocode_
 _./src/pages/hotelListPage.component.tsx_
 
 ```jsx
@@ -248,8 +249,234 @@ export const HotelListPageInner = (props : Props) =>
 export const HotelListPage = withStyles(styles)(HotelListPageInner);
 ```
 
-> Now we only need to chop down Card header, content and actions.
+-  Now we only need to chop down Card header, content and actions.
 
-- As a bonus by doing this we can move our container to be redux based quite easily (we only need to replace the container).
+_pseudocode_
+_./src/pages/components/hotelCard.component.tsx_
+
+```jsx
+export const HotelCard = (props : Props) =>
+      <Card className={classes.card} key={hotel.id}>
+        <HotelCardHeader 
+          name={hotel.name}
+          address={hotel.address1}
+          rating={props.hotel.hotelRating}
+        />              
+        
+        <CardContent>
+          <HotelInfo hotel={props.hotel}/>
+        </CardContent>
+        
+        <HotelCardActions/>                
+      </Card>
+```
+
+
+> We could further refactor this promoting to common the hotel info component, and moving to a pods solution structure (we will see it later on).
+
+> As a bonus by doing this we can move our container to be redux based quite easily (we only need to replace the container).
+
+
 
 - Let's start the refactor step by step.
+
+- First of all let's divide the current component in two:
+  - Container (smart).
+  - Presentational (dumb).
+
+_./src/pages/list/hotelListPage.container.tsx_
+
+```jsx
+import * as React from "react"
+import Card from '@material-ui/core/Card';
+import CardHeader from '@material-ui/core/CardHeader';
+import CardContent from '@material-ui/core/CardContent';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
+import { HotelEntity } from "../../model";
+import { getHotelList } from "../../api/hotel";
+import {HotelListPage} from './hoteListPage.component';
+
+interface State {
+  hotelList: HotelEntity[];
+}
+
+interface Props extends RouteComponentProps {
+}
+
+class HotelListPageContainerInner extends React.Component<Props, State> {
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      hotelList: []
+    }
+  }
+
+  componentDidMount() {
+    getHotelList().then(
+      (hotelList) => this.setState({ hotelList })
+    );
+  }
+
+  render() {    
+    return (
+      <HotelListPage hotelList={this.state.hotelList}/>
+    )
+  }
+}
+
+export const HotelListPageContainer = withRouter<Props>(HotelListPageContainerInner);
+```
+
+- Let's remove hotelListPage.tsx (remove _./src/pages/list/hotelListPage.tsx_).
+
+- Let's update the _index.ts_ file to poin to the pageContainer file.
+
+_./src/pages/list/index.ts_
+
+```diff
+- export * from './hoteListPage';
++ export * from './hotelListPage.container.tsx';
+```
+
+- Now let's create the page presentational component (dumb), we will start by just adding a 
+simple loop and showing the hotel name (we make this to ensure we have successfully completed
+the previous steps).
+
+_./src/pages/hotelListPage.component.tsx_
+
+```jsx
+import * as React from "react"
+import { withStyles, createStyles, WithStyles } from '@material-ui/core/styles';
+import { HotelEntity } from "../../model";
+
+
+interface Props {
+  hotelList: HotelEntity[];
+}
+
+// https://material-ui.com/guides/typescript/
+const styles = theme => createStyles({
+});
+
+export const HotelListPageInner = (props : Props) =>
+      <div style={
+        {
+          display: 'flex',
+          flexWrap: 'wrap',
+          justifyContent: 'space-between'
+        }}>
+        {
+          props.hotelList.map(
+            (hotel) => 
+              <h2 key={hotel.id}>{hotel.name}</h2>
+          )
+        }
+      </div>
+
+export const HotelListPage = withStyles(styles)(HotelListPageInner);
+```
+
+- Le'ts update the router switch map to indicate the new page entry point.
+
+_./src/main.tsx_
+
+```diff
+import * as React from 'react';
+import * as ReactDOM from 'react-dom';
+import { HashRouter, Switch, Route } from 'react-router-dom';
+- import { HotelListPage } from './pages/list';
++ import { HotelListPageContainer } from './pages/list';
+import { PageB } from './pages/b';
+import { createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles';
+```
+
+```diff
+  <Switch>
+-    <Route exact={true} path="/" component={HotelListPage} />
++    <Route exact={true} path="/" component={HotelListPageContainer} />
+    <Route path="/pageB" component={PageB} />
+  </Switch>
+```
+
+- Let's run the project and check that we are moving in the right direction.
+
+```bash
+npm start
+```
+
+- Now let's keep on componentizing this page:
+
+
+_./src/pages/hotelListPage.component.tsx_
+
+```diff
+import * as React from "react"
+import { withStyles, createStyles, WithStyles } from '@material-ui/core/styles';
+import { HotelEntity } from "../../model";
++ import { HotelCard } from './components/hotelCard'
+
+interface Props {
+  hotelList: HotelEntity[];
+}
+
+// https://material-ui.com/guides/typescript/
+const styles = theme => createStyles({
+});
+
+export const HotelListPageInner = (props : Props) =>
+      <div style={
+        {
+          display: 'flex',
+          flexWrap: 'wrap',
+          justifyContent: 'space-between'
+        }}>
+        {
+          props.hotelList.map(
+            (hotel) => 
+-               <h2 key={hotel.id}>{hotel.name}</h2>
++               <HotelCard hotel={hotel} key={hotel.id}/>
+          )
+        }
+      </div>
+
+export const HotelListPage = withStyles(styles)(HotelListPageInner);
+```
+
+- Let's breakdown HotelCard step by step, first we will just dump in the file
+the content as it was in the original page.
+
+_./src/pages/list/components/hotelCard.tsx_
+
+```tsx
+import * as React from "react"
+import { withStyles, createStyles, WithStyles } from '@material-ui/core/styles';
+import { HotelEntity } from "../../model";
+import { HotelCard } from './components/hotelCard'
+
+interface Props {
+  hotelList: HotelEntity[];
+}
+
+// https://material-ui.com/guides/typescript/
+const styles = theme => createStyles({
+});
+
+export const HotelListPageInner = (props : Props) =>
+      <div style={
+        {
+          display: 'flex',
+          flexWrap: 'wrap',
+          justifyContent: 'space-between'
+        }}>
+        {
+          props.hotelList.map(
+            (hotel) => 
+              <HotelCard hotel={hotel} key={hotel.id}/>
+          )
+        }
+      </div>
+
+export const HotelListPage = withStyles(styles)(HotelListPageInner);
+```

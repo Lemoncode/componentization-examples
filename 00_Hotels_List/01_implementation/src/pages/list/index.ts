@@ -1,1 +1,1 @@
-export * from './hoteListPage';
+export * from './hotelListPage.container';
