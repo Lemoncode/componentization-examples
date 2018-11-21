@@ -169,16 +169,19 @@ export const HotelListPage = withStyles(styles)(withRouter<Props>((HotelListPage
   - The hotel info content itself is something candidate to be reused in other components, not only in the card
   e.g. a hover or...
 
+## PSEUDOCODE 
+
 - Ideally how should look like this page (pseudocode):
 
-_pseudocode_
-_./src/pages/hotelListPage.container.tsx_
+**pseudocode**
+_./src/pages/list/hotelListPage.container.tsx_
 
 ```jsx
 import * as React from "react"
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { HotelEntity } from "../../model";
 import { getHotelList } from "../../api/hotel";
+import {HotelListPage} from './hoteListPage.component';
 
 interface State {
   hotelList: HotelEntity[];
@@ -188,7 +191,7 @@ interface State {
 interface Props extends RouteComponentProps {
 }
 
-class HotelListPageContainer extends React.Component<Props, State> {
+class HotelListPageContainerInner extends React.Component<Props, State> {
 
   constructor(props) {
     super(props);
@@ -211,9 +214,9 @@ class HotelListPageContainer extends React.Component<Props, State> {
   }
 }
 
-export const HotelListPageContainer = withRouter<Props>(HotelListPageInner);
+export const HotelListPageContainer = withRouter<Props>(HotelListPageContainerInner);
 ```
-_pseudocode_
+**pseudocode**
 _./src/pages/hotelListPage.component.tsx_
 
 ```jsx
@@ -251,7 +254,7 @@ export const HotelListPage = withStyles(styles)(HotelListPageInner);
 
 -  Now we only need to chop down Card header, content and actions.
 
-_pseudocode_
+**pseudocode**
 _./src/pages/components/hotelCard.component.tsx_
 
 ```jsx
@@ -276,7 +279,7 @@ export const HotelCard = (props : Props) =>
 
 > As a bonus by doing this we can move our container to be redux based quite easily (we only need to replace the container).
 
-
+## REAL REFACTOR
 
 - Let's start the refactor step by step.
 
@@ -906,6 +909,7 @@ import { HotelEntity } from "../../../model";
 - import ShareIcon from '@material-ui/icons/Share';
 import {HotelCardHeader} from './hotelCardHeader';
 import {HotelCardContent} from './hotelCardContent';
++ import {HotelCardActions} from './hotelCardActions';
 
 // https://material-ui.com/guides/typescript/
 const styles = theme => createStyles({
@@ -941,14 +945,15 @@ export const HotelCardInner = (props: Props) => {
           description={props.hotel.shortDescription}
         />
 
-        <CardActions className={classes.actions} disableActionSpacing>
-          <IconButton aria-label="Add to favorites">
-            <FavoriteIcon />
-          </IconButton>
-          <IconButton aria-label="Share">
-            <ShareIcon />
-          </IconButton>
-        </CardActions>
+-        <CardActions className={classes.actions} disableActionSpacing>
+-          <IconButton aria-label="Add to favorites">
+-            <FavoriteIcon />
+-          </IconButton>
+-          <IconButton aria-label="Share">
+-            <ShareIcon />
+-          </IconButton>
+-        </CardActions>
++        <HotelCardActions/>
       </Card>
   )
 }
