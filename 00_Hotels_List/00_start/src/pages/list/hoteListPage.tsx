@@ -34,41 +34,28 @@ const styles = theme => createStyles({
   },  
 });
 
-interface State {
-  hotelList: HotelEntity[];
-}
-
-
 interface Props extends RouteComponentProps, WithStyles<typeof styles> {
+
 }
 
-class HotelListPageInner extends React.Component<Props, State> {
+const HotelListPageInner = (props : Props) => {
+  const [hotelList, setHotelList] = React.useState<HotelEntity[]>([]);
+  const { classes } = props;
 
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      hotelList: []
-    }
-  }
-
-  componentDidMount() {
+  React.useEffect( () => {
     getHotelList().then(
-      (hotelList) => this.setState({ hotelList })
+      (hotelList) => setHotelList(hotelList)
     );
-  }
-
-  render() {
-    const { classes } = this.props;
-    return (
-      <div style={
+  },[])
+  return (
+    <div style={
         {
           display: 'flex',
           flexWrap: 'wrap',
           justifyContent: 'space-between'
         }}>
         {
-          this.state.hotelList.map(
+          hotelList.map(
             (hotel) =>
               <Card className={classes.card} key={hotel.id}>
                 <CardHeader 
@@ -114,8 +101,6 @@ class HotelListPageInner extends React.Component<Props, State> {
           )
         }
       </div>
-    )
-  }
+  )
 }
-
 export const HotelListPage = withStyles(styles)(withRouter<Props>((HotelListPageInner)));
