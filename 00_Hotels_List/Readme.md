@@ -917,6 +917,9 @@ const styles = theme => createStyles({
     width: '500px',
     marginTop: '10px',
   },
+- actions: {
+-   display: 'flex',
+- },
 });
 
 interface Props extends WithStyles<typeof styles> {
