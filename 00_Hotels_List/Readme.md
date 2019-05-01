@@ -297,7 +297,7 @@ import CardContent from '@material-ui/core/CardContent';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { HotelEntity } from "../../model";
 import { getHotelList } from "../../api/hotel";
-import {HotelListPage} from './hoteListPage.component';
+import {HotelListPage} from './hotelListPage.component';
 
 interface State {
   hotelList: HotelEntity[];
